@@ -65,3 +65,30 @@ train_control <- trainControl(method = "cv", number = 10)
 cv_model <- train(stroke ~ ., data = stroke_data, method = "glm", trControl = train_control)
 
 print(cv_model)
+
+# Load required libraries
+library(caret)
+library(rpart)
+library(ranger)
+
+# Define training control
+train_control <- trainControl(method = "cv", number = 10)
+
+# Train GLM model
+model_glm <- train(stroke ~ ., data = stroke_data, method = "glm", trControl = train_control)
+
+# Train decision tree model
+model_tree <- train(stroke ~ ., data = stroke_data, method = "rpart", trControl = train_control)
+
+# Train random forest model
+model_rf <- train(stroke ~ ., data = stroke_data, method = "ranger", trControl = train_control)
+
+# View model summaries
+print("GLM Model Summary:")
+print(summary(model_glm))
+
+print("Decision Tree Model Summary:")
+print(summary(model_tree))
+
+print("Random Forest Model Summary:")
+print(summary(model_rf))
