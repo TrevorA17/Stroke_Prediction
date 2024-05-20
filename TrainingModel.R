@@ -35,3 +35,25 @@ print("Dimensions of Training Data:")
 print(dim(train_data))
 print("Dimensions of Testing Data:")
 print(dim(test_data))
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Function to calculate bootstrap statistic
+bootstrap_statistic <- function(data) {
+  # Sample with replacement
+  boot_sample <- sample(data, replace = TRUE)
+  # Calculate statistic (mean, median, etc.) for the bootstrap sample
+  return(mean(boot_sample, na.rm = TRUE))  # Adjust as needed
+}
+
+# Perform bootstrapping for BMI
+num_bootstraps <- 1000  # Number of bootstrap iterations
+bootstrap_results <- replicate(num_bootstraps, bootstrap_statistic(stroke_data$bmi))
+
+# Summary of bootstrap results
+summary_bootstrap <- summary(bootstrap_results)
+print(summary_bootstrap)
+
+# Visualize bootstrap distribution
+hist(bootstrap_results, breaks = 30, col = "skyblue", main = "Bootstrap Distribution of BMI", xlab = "Bootstrap Means")
