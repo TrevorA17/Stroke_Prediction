@@ -47,6 +47,13 @@ bootstrap_statistic <- function(data) {
   return(mean(boot_sample, na.rm = TRUE))  # Adjust as needed
 }
 
+# Basic Cross-Validation
+library(caret)
+set.seed(123)
+train_control <- trainControl(method = "cv", number = 10)
+model <- train(stroke ~ ., data = stroke_data, method = "glm", trControl = train_control)
+
+
 # Perform bootstrapping for BMI
 num_bootstraps <- 1000  # Number of bootstrap iterations
 bootstrap_results <- replicate(num_bootstraps, bootstrap_statistic(stroke_data$bmi))
