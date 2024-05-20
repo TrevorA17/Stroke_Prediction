@@ -101,5 +101,6 @@ ggplot(stroke_data, aes(x = age, y = avg_glucose_level, color = stroke)) +
 
 # Pairwise scatterplot matrix of numerical variables
 num_vars <- c("age", "avg_glucose_level", "bmi")
-ggpairs(stroke_data[, num_vars], mapping = aes(color = stroke))
+# Pairwise scatterplot matrix of numerical variables including 'stroke'
+ggpairs(stroke_data, columns = num_vars, mapping = aes(color = stroke))
 
