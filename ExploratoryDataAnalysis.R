@@ -22,7 +22,6 @@ head(stroke_data)
 # View the dataset in a separate viewer window
 View(stroke_data)
 
-
 # Measures of Frequency
 # Count of stroke events
 stroke_count <- table(stroke_data$stroke)
@@ -61,7 +60,6 @@ print(correlation_age_glucose)
 chi_square_smoking_stroke <- chisq.test(table(stroke_data$smoking_status, stroke_data$stroke))
 print("Chi-square test for association between smoking status and stroke:")
 print(chi_square_smoking_stroke)
-
 
 # Check the levels of work_type
 levels(stroke_data$work_type)
