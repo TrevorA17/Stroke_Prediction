@@ -69,3 +69,37 @@ anova_result <- aov(avg_glucose_level ~ work_type, data = stroke_data)
 print("ANOVA results:")
 print(summary(anova_result))
 
+# Load required libraries
+library(ggplot2)
+library(GGally)
+
+# Univariate Plots
+# Histogram of age
+ggplot(stroke_data, aes(x = age)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 30) +
+  labs(title = "Histogram of Age",
+       x = "Age",
+       y = "Frequency")
+
+# Boxplot of avg_glucose_level
+ggplot(stroke_data, aes(x = 1, y = avg_glucose_level, fill = stroke)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Average Glucose Level by Stroke Status",
+       x = NULL,
+       y = "Average Glucose Level",
+       fill = "Stroke Status") +
+  theme(axis.text.x = element_blank())  # Hide x-axis label
+
+# Multivariate Plot
+# Scatterplot of age vs. avg_glucose_level colored by stroke status
+ggplot(stroke_data, aes(x = age, y = avg_glucose_level, color = stroke)) +
+  geom_point() +
+  labs(title = "Scatterplot of Age vs. Average Glucose Level by Stroke Status",
+       x = "Age",
+       y = "Average Glucose Level",
+       color = "Stroke Status")
+
+# Pairwise scatterplot matrix of numerical variables
+num_vars <- c("age", "avg_glucose_level", "bmi")
+ggpairs(stroke_data[, num_vars], mapping = aes(color = stroke))
+
