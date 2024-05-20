@@ -62,3 +62,12 @@ chi_square_smoking_stroke <- chisq.test(table(stroke_data$smoking_status, stroke
 print("Chi-square test for association between smoking status and stroke:")
 print(chi_square_smoking_stroke)
 
+
+# Check the levels of work_type
+levels(stroke_data$work_type)
+
+# Perform ANOVA
+anova_result <- aov(avg_glucose_level ~ work_type, data = stroke_data)
+print("ANOVA results:")
+print(summary(anova_result))
+
