@@ -86,9 +86,23 @@ model_rf <- train(stroke ~ ., data = stroke_data, method = "ranger", trControl =
 # View model summaries
 print("GLM Model Summary:")
 print(summary(model_glm))
+print(model_glm)
 
 print("Decision Tree Model Summary:")
 print(summary(model_tree))
+print(model_tree)
 
 print("Random Forest Model Summary:")
 print(summary(model_rf))
+print(model_rf)
+
+
+# Compare model performance using resamples
+models <- list("GLM" = model_glm, "Decision Tree" = model_tree, "Random Forest" = model_rf)
+model_resamples <- resamples(models)
+
+# Summarize the model performance
+summary(model_resamples)
+
+# Visualize model performance
+bwplot(model_resamples, metric = "Accuracy")
