@@ -1,0 +1,201 @@
+---
+title: "Stroke Prediction"
+author: "Trevor Okinda"
+date: "2024"
+output:
+  github_document: 
+    toc: yes
+    toc_depth: 4
+    fig_width: 6
+    fig_height: 4
+    df_print: default
+editor_options:
+  chunk_output_type: console
+---
+
+# Student Details
+
+|                                              |     |
+|----------------------------------------------|-----|
+| **Student ID Number**                        | 134780 |
+| **Student Name**                             | Trevor Okinda |
+| **BBIT 4.2 Group**                           | C |
+| **Project Name**                             | Stroke Prediction |
+
+# Setup Chunk
+
+**Note:** the following KnitR options have been set as the global defaults: <BR> `knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, collapse = FALSE, tidy = TRUE)`.
+
+More KnitR options are documented here <https://bookdown.org/yihui/rmarkdown-cookbook/chunk-options.html> and here <https://yihui.org/knitr/options/>.
+
+```{r setup, include=FALSE}
+library(formatR)
+knitr::opts_chunk$set(
+  warning = FALSE,
+  collapse = FALSE
+)
+```
+
+### Source: 
+
+The dataset that was used can be downloaded here: *\<https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset\>*
+
+### Reference:
+
+*\<fedesoriano. (2020). Stroke Prediction Dataset. Retrieved from Kaggle https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset\>\
+Refer to the APA 7th edition manual for rules on how to cite datasets: <https://apastyle.apa.org/style-grammar-guidelines/references/examples/data-set-references>*
+
+# Exploratory Data Analysis
+## Load dataset
+```{r Load dataset}
+# Load dataset
+stroke_data <- read.csv("stroke_data.csv", colClasses = c(
+  gender = "factor",
+  age = "numeric",
+  hypertension = "factor",
+  heart_disease = "factor",
+  ever_married = "factor",
+  work_type = "factor",
+  Residence_type = "factor",
+  avg_glucose_level = "numeric",
+  bmi = "numeric",
+  smoking_status = "factor",
+  stroke = "factor"
+))
+
+# Display the structure of the dataset
+str(stroke_data)
+
+# View the first few rows of the dataset
+head(stroke_data)
+
+# View the dataset in a separate viewer window
+View(stroke_data)
+```
+
+## Measures of Frequency
+```{r MOF}
+# Measures of Frequency
+# Count of stroke events
+stroke_count <- table(stroke_data$stroke)
+print("Frequency of stroke events:")
+print(stroke_count)
+```
+
+## Measures of Central Tendency
+```{r MOCT}
+# Measures of Central Tendency
+# Mean age
+mean_age <- mean(stroke_data$age, na.rm = TRUE)
+print("Mean age:")
+print(mean_age)
+
+# Median avg_glucose_level
+median_glucose <- median(stroke_data$avg_glucose_level, na.rm = TRUE)
+print("Median avg_glucose_level:")
+print(median_glucose)
+```
+
+## Measures of Distribution
+```{r MOD}
+# Measures of Distribution
+# Standard deviation of BMI
+sd_bmi <- sd(stroke_data$bmi, na.rm = TRUE)
+print("Standard deviation of BMI:")
+print(sd_bmi)
+
+# Range of avg_glucose_level
+range_glucose <- range(stroke_data$avg_glucose_level, na.rm = TRUE)
+print("Range of avg_glucose_level:")
+print(range_glucose)
+```
+
+## Measures of Relationship
+```{r MOR}
+# Measures of Relationship
+# Correlation between age and avg_glucose_level
+correlation_age_glucose <- cor(stroke_data$age, stroke_data$avg_glucose_level, use = "complete.obs")
+print("Correlation between age and avg_glucose_level:")
+print(correlation_age_glucose)
+
+# Association between smoking status and stroke using Chi-square test
+chi_square_smoking_stroke <- chisq.test(table(stroke_data$smoking_status, stroke_data$stroke))
+print("Chi-square test for association between smoking status and stroke:")
+print(chi_square_smoking_stroke)
+```
+
+## ANOVA
+```{r ANOVA}
+# Check the levels of work_type
+levels(stroke_data$work_type)
+
+# Perform ANOVA
+anova_result <- aov(avg_glucose_level ~ work_type, data = stroke_data)
+print("ANOVA results:")
+print(summary(anova_result))
+```
+
+## Plots
+```{r Plots}
+# Load required libraries
+library(ggplot2)
+library(GGally)
+
+# Univariate Plots
+# Histogram of age
+ggplot(stroke_data, aes(x = age)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 30) +
+  labs(title = "Histogram of Age",
+       x = "Age",
+       y = "Frequency")
+
+# Boxplot of avg_glucose_level
+ggplot(stroke_data, aes(x = 1, y = avg_glucose_level, fill = stroke)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Average Glucose Level by Stroke Status",
+       x = NULL,
+       y = "Average Glucose Level",
+       fill = "Stroke Status") +
+  theme(axis.text.x = element_blank())  # Hide x-axis label
+
+# Multivariate Plot
+# Scatterplot of age vs. avg_glucose_level colored by stroke status
+ggplot(stroke_data, aes(x = age, y = avg_glucose_level, color = stroke)) +
+  geom_point() +
+  labs(title = "Scatterplot of Age vs. Average Glucose Level by Stroke Status",
+       x = "Age",
+       y = "Average Glucose Level",
+       color = "Stroke Status")
+
+# Pairwise scatterplot matrix of numerical variables
+num_vars <- c("age", "avg_glucose_level", "bmi")
+# Pairwise scatterplot matrix of numerical variables including 'stroke'
+ggpairs(stroke_data, columns = num_vars, mapping = aes(color = stroke))
+```
+
+# Preprocessing and Data Transformation
+## Missing Values
+```{r Missing Values}
+# Check for missing values in each column
+missing_values <- sapply(stroke_data, function(x) sum(is.na(x)))
+print("Missing values in each column:")
+print(missing_values)
+
+# Total missing values in the dataset
+total_missing <- sum(missing_values)
+print("Total missing values in the dataset:")
+print(total_missing)
+```
+
+## Imputation
+```{r Imputation}
+# Impute missing values in 'bmi' column with mean
+mean_bmi <- mean(stroke_data$bmi, na.rm = TRUE)
+stroke_data$bmi[is.na(stroke_data$bmi)] <- mean_bmi
+
+# Confirm that missing values have been imputed
+missing_values_after_imputation <- sum(is.na(stroke_data$bmi))
+print("Missing values in 'bmi' column after imputation:")
+print(missing_values_after_imputation)
+```
+
